@@ -34,7 +34,15 @@ public class PhotoAlbumModel implements Iterable<Photo> {
 
     // Method to get a photo at a specific index
     public Photo getPhotoAt(int index) {
+        if (index < 0 || index >= photos.size()) {
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
+        }
         return photos.get(index);
+    }
+
+    // Method to get all photos
+    public List<Photo> getAllPhotos() {
+        return new ArrayList<>(photos); // Return a copy of the photos list
     }
 
     // Method to sort photos by name
@@ -69,7 +77,7 @@ public class PhotoAlbumModel implements Iterable<Photo> {
         @Override
         public Photo next() {
             if (!hasNext()) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("No more photos available.");
             }
             return photos.get(currentIndex++);
         }
@@ -80,16 +88,16 @@ public class PhotoAlbumModel implements Iterable<Photo> {
 
         public Photo previous() {
             if (!hasPrevious()) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("No previous photo available.");
             }
             return photos.get(--currentIndex);
         }
 
         public Photo current() {
-            if (currentIndex < 0 || currentIndex >= photos.size()) {
-                throw new NoSuchElementException();
+            if (currentIndex <= 0 || currentIndex > photos.size()) {
+                throw new NoSuchElementException("Current photo is not available.");
             }
-            return photos.get(currentIndex);
+            return photos.get(currentIndex - 1); // Return the current photo without advancing the index
         }
     }
 }
