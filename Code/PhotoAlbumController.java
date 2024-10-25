@@ -101,10 +101,13 @@ public final class PhotoAlbumController {
     }
 
     private void refreshPhotoList() {
-        view.updatePhotoListModel(); // Ensure the list is refreshed
+        view.updatePhotoListModel(model.getAllPhotos()); // Pass the list of photos
         refreshIterator(); // Reinitialize the iterator after sorting
+
         if (model.getPhotoCount() > 0) {
-            view.setCurrentPhoto(model.getPhotoAt(0)); // Set the first photo as the current one
+            Photo firstPhoto = model.getPhotoAt(0);
+            System.out.println("Setting current photo to: " + firstPhoto.getName()); // Debugging output
+            view.setCurrentPhoto(firstPhoto); // Set the first photo as the current one
         } else {
             view.setCurrentPhoto(null); // No photo to display
         }
