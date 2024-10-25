@@ -38,6 +38,7 @@ public class PhotoAlbumView {
         photoList.setCellRenderer(new PhotoCellRenderer()); // Set custom cell renderer
         currentPhotoLabel = new JLabel("Current Photo: None");
         photoDisplayLabel = new JLabel(); // To display the current photo
+        photoDisplayLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center the photo
 
         // Panel for input fields and buttons
         JPanel inputPanel = new JPanel();
@@ -59,6 +60,11 @@ public class PhotoAlbumView {
         mainPanel.add(new JScrollPane(photoList), BorderLayout.WEST); // Photo list on the left
         mainPanel.add(currentPhotoPanel, BorderLayout.CENTER); // Current photo on the right
 
+        // Ensure the current photo takes up 80% of the panel
+        currentPhotoPanel.setPreferredSize(new Dimension(0, 0));
+        currentPhotoPanel.setMinimumSize(new Dimension(0, 0));
+        currentPhotoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+
         // Panel for sort and navigation buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -74,28 +80,9 @@ public class PhotoAlbumView {
         frame.add(buttonPanel, BorderLayout.SOUTH); // Button panel at the bottom
 
         // Frame settings
-        frame.setSize(800, 600);
+        frame.setSize(700, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
-        // Adding a component listener for resizing behavior
-        frame.addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                updatePhotoDisplay();
-            }
-        });
-    }
-
-    // Method to update the photo display area on resizing
-    private void updatePhotoDisplay() {
-        if (photoDisplayLabel.getIcon() != null) {
-            ImageIcon icon = (ImageIcon) photoDisplayLabel.getIcon();
-            Image img = icon.getImage();
-            // Resize the image to fill the display area, keeping the aspect ratio
-            Image newImg = img.getScaledInstance(photoDisplayLabel.getWidth(), photoDisplayLabel.getHeight(), Image.SCALE_SMOOTH);
-            photoDisplayLabel.setIcon(new ImageIcon(newImg));
-        }
     }
 
     // Custom cell renderer to display the photo information
@@ -104,13 +91,36 @@ public class PhotoAlbumView {
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                                                       boolean isSelected, boolean cellHasFocus) {
             Photo photo = (Photo) value;
+
+            // Create a panel to hold the title and thumbnail
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Vertical layout
+
+            // Create a label for the photo title
             String text = photo.getName() + " - " + photo.getDateAdded() + " (" + photo.getFileSize() + " bytes)";
-            JLabel label = (JLabel) super.getListCellRendererComponent(list, text, index, isSelected, cellHasFocus);
+            JLabel titleLabel = new JLabel(text);
+            titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center the title label
+
             // Load and set the thumbnail image
             ImageIcon icon = new ImageIcon(photo.getFilePath());
-            Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize to thumbnail
-            label.setIcon(new ImageIcon(img));
-            return label;
+            Image img = icon.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH); // Resize to thumbnail
+            JLabel thumbnailLabel = new JLabel(new ImageIcon(img));
+            thumbnailLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center the thumbnail
+
+            // Add title and thumbnail to the panel
+            panel.add(titleLabel);
+            panel.add(thumbnailLabel);
+
+            // Set the panel properties based on selection
+            if (isSelected) {
+                panel.setBackground(list.getSelectionBackground());
+                titleLabel.setForeground(list.getSelectionForeground());
+            } else {
+                panel.setBackground(list.getBackground());
+                titleLabel.setForeground(list.getForeground());
+            }
+
+            return panel; // Return the panel containing title and thumbnail
         }
     }
 
@@ -147,9 +157,8 @@ public class PhotoAlbumView {
             // Load the image
             ImageIcon icon = new ImageIcon(photo.getFilePath());
             Image img = icon.getImage(); // transform it
-            Image newimg = img.getScaledInstance(500, 500, Image.SCALE_SMOOTH); // scale it smoothly
+            Image newimg = img.getScaledInstance(700, 700, Image.SCALE_SMOOTH); // scale it smoothly
             photoDisplayLabel.setIcon(new ImageIcon(newimg)); // transform it back
-            updatePhotoDisplay(); // Adjust the display on setting the photo
         } else {
             currentPhotoLabel.setText("Current Photo: None");
             photoDisplayLabel.setIcon(null);
