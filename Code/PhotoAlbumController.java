@@ -1,11 +1,10 @@
 import java.io.File;
 import java.util.Date;
-import java.util.Iterator;
 
 public final class PhotoAlbumController {
     private final PhotoAlbumModel model;
     private final PhotoAlbumView view;
-    private Iterator<Photo> iterator; // Store the iterator to manage state
+    private PhotoAlbumModel.AlbumIteratorImpl iterator; // Store the iterator to manage state
 
     public PhotoAlbumController(PhotoAlbumModel model, PhotoAlbumView view) {
         this.model = model;
@@ -27,7 +26,7 @@ public final class PhotoAlbumController {
     private void addPhoto() {
         String name = view.getPhotoName();
         String path = view.getFilePath();
-        
+
         System.out.println("Attempting to add photo: " + name + ", " + path); // Debugging output
 
         // Validate the input
@@ -78,13 +77,11 @@ public final class PhotoAlbumController {
     }
 
     private void previousPhoto() {
-        if (iterator instanceof PhotoAlbumModel.AlbumIteratorImpl albumIterator) {
-            if (albumIterator.hasPrevious()) {
-                Photo previousPhoto = albumIterator.previous();
-                view.setCurrentPhoto(previousPhoto);
-            } else {
-                view.showMessage("You are already at the first photo.", "Info");
-            }
+        if (iterator.hasPrevious()) {
+            Photo previousPhoto = iterator.previous();
+            view.setCurrentPhoto(previousPhoto);
+        } else {
+            view.showMessage("You are already at the first photo.", "Info");
         }
     }
 
@@ -114,6 +111,6 @@ public final class PhotoAlbumController {
     }
 
     private void refreshIterator() {
-        iterator = model.iterator(); // Reset the iterator after modifying the list
+        iterator = model.new AlbumIteratorImpl(); // Reset the iterator after modifying the list
     }
 }
