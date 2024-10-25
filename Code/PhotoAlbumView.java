@@ -1,9 +1,10 @@
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.*;
 
 public class PhotoAlbumView {
-    private JFrame frame;
+    private final JFrame frame;
     private final JTextField photoNameField; // Field to input photo name
     private final JTextField filePathField; // Field to input file path
     private final JButton addButton, deleteButton;
@@ -206,8 +207,12 @@ public class PhotoAlbumView {
     }
 
     // Method to update the photo list model
-    public void updatePhotoListModel() {
-        photoList.repaint();
+    public void updatePhotoListModel(List<Photo> photos) {
+        photoListModel.clear(); // Clear existing photos
+        for (Photo photo : photos) {
+            photoListModel.addElement(photo); // Add photos back to the model
+        }
+        photoList.repaint(); // Refresh the display
     }
 
     // Method to show a message dialog
