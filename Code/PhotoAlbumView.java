@@ -3,18 +3,27 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.*;
 
+/**
+ * PhotoAlbumView is the view component of the photo album application, responsible
+ * for displaying the user interface, managing input fields, buttons, and photo
+ * display areas. It interacts with the controller by providing methods to
+ * retrieve input data, set display properties, and add action listeners.
+ */
 public class PhotoAlbumView {
     private final JFrame frame;
-    private final JTextField photoNameField; // Field to input photo name
-    private final JTextField filePathField; // Field to input file path
+    private final JTextField photoNameField; 
+    private final JTextField filePathField; 
     private final JButton addButton, deleteButton;
     private final JButton sortByNameButton, sortByDateButton, sortBySizeButton;
     private final JButton nextButton, previousButton;
-    private final JList<Photo> photoList; // List to display photos
+    private final JList<Photo> photoList; 
     private final JLabel currentPhotoLabel; // Label to show the current photo name
     private final JLabel photoDisplayLabel; // Label to display the current photo (thumbnail or full image)
     private final DefaultListModel<Photo> photoListModel; // Model for the photo list
 
+    /**
+     * Constructs the PhotoAlbumView, initializing the frame and its components.
+     */
     public PhotoAlbumView() {
         // Initialize the frame
         frame = new JFrame("Photo Album Manager");
@@ -86,7 +95,9 @@ public class PhotoAlbumView {
         frame.setVisible(true);
     }
 
-    // Custom cell renderer to display the photo information
+    /**
+     * Custom cell renderer for displaying photo information in the JList.
+     */
     private class PhotoCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -125,33 +136,56 @@ public class PhotoAlbumView {
         }
     }
 
-    // Method to get the photo name from the input field
+    /**
+     * Retrieves the photo name entered by the user.
+     *
+     * @return the photo name as a String
+     */
     public String getPhotoName() {
         return photoNameField.getText();
     }
 
-    // Method to get the file path from the input field
+
+    /**
+     * Retrieves the file path entered by the user.
+     *
+     * @return the file path as a String
+     */
     public String getFilePath() {
         return filePathField.getText();
     }
 
-    // Method to clear input fields
+    /**
+     * Clears the input fields for photo name and file path.
+     */
     public void clearInputFields() {
         photoNameField.setText("");
         filePathField.setText("");
     }
 
-    // Method to add a photo to the list model
+    /**
+     * Adds a photo to the list model, updating the JList.
+     *
+     * @param photo the Photo object to add to the list model
+     */
     public void addPhotoToList(Photo photo) {
         photoListModel.addElement(photo);
     }
 
-    // Method to remove a photo from the list model
+    /**
+     * Removes a photo from the list model.
+     *
+     * @param photo the Photo object to remove from the list model
+     */
     public void removePhotoFromList(Photo photo) {
         photoListModel.removeElement(photo);
     }
 
-    // Method to set the current photo label and display
+    /**
+     * Sets the current photo in the display area, showing its thumbnail.
+     *
+     * @param photo the Photo object to display
+     */
     public void setCurrentPhoto(Photo photo) {
         if (photo != null) {
             currentPhotoLabel.setText("Current Photo: " + photo.getName());
@@ -166,47 +200,85 @@ public class PhotoAlbumView {
         }
     }
 
-    // Method to add listener for the add button
+    /**
+     * Adds an ActionListener for the add photo button.
+     *
+     * @param listenForAddButton the ActionListener to add
+     */
     public void addAddPhotoListener(ActionListener listenForAddButton) {
         addButton.addActionListener(listenForAddButton);
     }
 
-    // Method to add listener for the delete button
+
+    /**
+     * Adds an ActionListener for the delete photo button.
+     *
+     * @param listenForDeleteButton the ActionListener to add
+     */
     public void addDeletePhotoListener(ActionListener listenForDeleteButton) {
         deleteButton.addActionListener(listenForDeleteButton);
     }
 
-    // Method to add listener for the next button
+    /**
+     * Adds an ActionListener for the "Next" button.
+     *
+     * @param listenForNextButton the ActionListener to add for the "Next" button
+     */
     public void addNextPhotoListener(ActionListener listenForNextButton) {
         nextButton.addActionListener(listenForNextButton);
     }
 
-    // Method to add listener for the previous button
+    /**
+     * Adds an ActionListener for the "Previous" button.
+     *
+     * @param listenForPreviousButton the ActionListener to add for the "Previous" button
+     */
     public void addPreviousPhotoListener(ActionListener listenForPreviousButton) {
         previousButton.addActionListener(listenForPreviousButton);
     }
 
-    // Method to add listener for sort by name button
+    /**
+     * Adds an ActionListener for the "Sort By Name" button.
+     *
+     * @param listenForSortByNameButton the ActionListener to add for the "Sort By Name" button
+     */
     public void addSortByNameListener(ActionListener listenForSortByNameButton) {
         sortByNameButton.addActionListener(listenForSortByNameButton);
     }
 
-    // Method to add listener for sort by date button
+    /**
+     * Adds an ActionListener for the "Sort By Date" button.
+     *
+     * @param listenForSortByDateButton the ActionListener to add for the "Sort By Date" button
+     */
     public void addSortByDateListener(ActionListener listenForSortByDateButton) {
         sortByDateButton.addActionListener(listenForSortByDateButton);
     }
 
-    // Method to add listener for sort by size button
+    /**
+     * Adds an ActionListener for the "Sort By Size" button.
+     *
+     * @param listenForSortBySizeButton the ActionListener to add for the "Sort By Size" button
+     */
     public void addSortBySizeListener(ActionListener listenForSortBySizeButton) {
         sortBySizeButton.addActionListener(listenForSortBySizeButton);
     }
 
-    // Method to get the currently selected photo from the list
+    /**
+     * Retrieves the currently selected photo from the photo list.
+     *
+     * @return the selected Photo object from the photo list, or null if no photo is selected
+     */
     public Photo getSelectedPhoto() {
         return photoList.getSelectedValue();
     }
 
-    // Method to update the photo list model
+
+    /**
+     * Updates the photo list model with a new list of photos and repaints the JList.
+     *
+     * @param photos the List of Photo objects to display
+     */
     public void updatePhotoListModel(List<Photo> photos) {
         photoListModel.clear(); // Clear existing photos
         for (Photo photo : photos) {
@@ -215,7 +287,12 @@ public class PhotoAlbumView {
         photoList.repaint(); // Refresh the display
     }
 
-    // Method to show a message dialog
+    /**
+     * Displays a message dialog with the specified message and title.
+     *
+     * @param message the message to display
+     * @param title the title of the dialog
+     */
     public void showMessage(String message, String title) {
         JOptionPane.showMessageDialog(frame, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
