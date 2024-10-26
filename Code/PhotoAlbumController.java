@@ -1,11 +1,22 @@
 import java.io.File;
 import java.util.Date;
 
+/**
+ * PhotoAlbumController manages interactions between the PhotoAlbumModel and PhotoAlbumView.
+ * It handles user actions such as adding, deleting, and navigating photos, as well as sorting.
+ */
 public final class PhotoAlbumController {
     private final PhotoAlbumModel model;
     private final PhotoAlbumView view;
-    private PhotoAlbumModel.AlbumIteratorImpl iterator; // Store the iterator to manage state
+    private PhotoAlbumModel.AlbumIteratorImpl iterator; // Iterator to navigate photos
 
+    /**
+     * Constructs a controller with the given model and view, setting up listeners
+     * and initializing the iterator.
+     *
+     * @param model the PhotoAlbumModel instance
+     * @param view  the PhotoAlbumView instance
+     */
     public PhotoAlbumController(PhotoAlbumModel model, PhotoAlbumView view) {
         this.model = model;
         this.view = view;
@@ -13,6 +24,9 @@ public final class PhotoAlbumController {
         refreshIterator(); // Initialize the iterator
     }
 
+    /**
+     * Sets up listeners for the view to handle user actions.
+     */
     public void setupListeners() {
         view.addAddPhotoListener(e -> addPhoto());
         view.addDeletePhotoListener(e -> deletePhoto());
@@ -23,19 +37,20 @@ public final class PhotoAlbumController {
         view.addSortBySizeListener(e -> sortBySize());
     }
 
+    // Private helper methods to handle specific actions:
+
+    /**
+     * Adds a new photo to the album, validating input and updating the model and view.
+     */
     private void addPhoto() {
         String name = view.getPhotoName();
         String path = view.getFilePath();
 
-        System.out.println("Attempting to add photo: " + name + ", " + path); // Debugging output
-
-        // Validate the input
         if (name.isEmpty() || path.isEmpty()) {
             view.showMessage("Photo name and file path cannot be empty.", "Error");
             return;
         }
 
-        // Check if the file exists and is a valid image file
         File file = new File(path);
         if (!file.exists() || !file.isFile() || 
             (!path.endsWith(".jpg") && !path.endsWith(".png") && !path.endsWith(".jpeg"))) {
@@ -43,19 +58,19 @@ public final class PhotoAlbumController {
             return;
         }
 
-        // Create a new Photo object
         Photo newPhoto = new Photo(name, path, new Date(), file.length());
         model.addPhoto(newPhoto);
         view.addPhotoToList(newPhoto);
         view.clearInputFields();
-        refreshPhotoList(); // Update the photo list to reflect the newly added photo
+        refreshPhotoList();
         view.showMessage("Photo added successfully.", "Success");
     }
 
+    /**
+     * Deletes the selected photo from the album, updating the model and view.
+     */
     private void deletePhoto() {
         Photo selectedPhoto = view.getSelectedPhoto();
-        System.out.println("Attempting to delete photo: " + (selectedPhoto != null ? selectedPhoto.getName() : "None")); // Debugging output
-
         if (selectedPhoto == null) {
             view.showMessage("Please select a photo to delete.", "Error");
             return;
@@ -63,10 +78,13 @@ public final class PhotoAlbumController {
 
         model.removePhoto(selectedPhoto);
         view.removePhotoFromList(selectedPhoto);
-        refreshPhotoList(); // Update the list after deletion
+        refreshPhotoList();
         view.showMessage("Photo deleted successfully.", "Success");
     }
 
+    /**
+     * Advances to the next photo in the album and updates the view.
+     */
     private void nextPhoto() {
         if (iterator.hasNext()) {
             Photo nextPhoto = iterator.next();
@@ -76,6 +94,9 @@ public final class PhotoAlbumController {
         }
     }
 
+    /**
+     * Moves to the previous photo in the album and updates the view.
+     */
     private void previousPhoto() {
         if (iterator.hasPrevious()) {
             Photo previousPhoto = iterator.previous();
@@ -85,35 +106,49 @@ public final class PhotoAlbumController {
         }
     }
 
+    /**
+     * Sorts photos by name and refreshes the list in the view.
+     */
     private void sortByName() {
         model.sortPhotosByName();
         refreshPhotoList();
     }
 
+    /**
+     * Sorts photos by date and refreshes the list in the view.
+     */
     private void sortByDate() {
         model.sortPhotosByDate();
         refreshPhotoList();
     }
 
+    /**
+     * Sorts photos by file size and refreshes the list in the view.
+     */
     private void sortBySize() {
         model.sortPhotosBySize();
         refreshPhotoList();
     }
 
+    /**
+     * Updates the photo list model in the view and reinitializes the iterator.
+     */
     private void refreshPhotoList() {
-        view.updatePhotoListModel(model.getAllPhotos()); // Pass the list of photos
-        refreshIterator(); // Reinitialize the iterator after sorting
+        view.updatePhotoListModel(model.getAllPhotos());
+        refreshIterator();
 
         if (model.getPhotoCount() > 0) {
             Photo firstPhoto = model.getPhotoAt(0);
-            System.out.println("Setting current photo to: " + firstPhoto.getName()); // Debugging output
-            view.setCurrentPhoto(firstPhoto); // Set the first photo as the current one
+            view.setCurrentPhoto(firstPhoto);
         } else {
-            view.setCurrentPhoto(null); // No photo to display
+            view.setCurrentPhoto(null);
         }
     }
 
+    /**
+     * Reinitializes the photo iterator after modifications.
+     */
     private void refreshIterator() {
-        iterator = model.new AlbumIteratorImpl(); // Reset the iterator after modifying the list
+        iterator = model.new AlbumIteratorImpl();
     }
 }
